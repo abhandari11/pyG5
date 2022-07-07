@@ -105,6 +105,30 @@ This will feed the data from the sliders in the UI instead of the X-Plane networ
 
 ![ViewTester](https://raw.githubusercontent.com/blauret/pyG5/main/assets/pyG5ViewTester.png)
 
+## Use case for UAVs
+
+attitude_ind_widget.py is the only addition in this forked repo. It was used as an attitude indicator widget in the Ground Control Station being developed for Unmanned Aircraft Systems. The overall GCS is being built using PyQt5 as well. The parameters are being passed to the constructor method of "pyG5AIWidget" from a separate file (example included below). 
+
+Instead of including a logging functionality, pyG5AIWidget in attitude_ind_widget.py simply acts as a class with a method to draw the indicator. For my project, I am passing the values to class attrributes as:
+        self.hud = pyG5AIWidget()
+        self.hud.roll_angle = 30
+        self.hud_pitch_angle = -10
+        .
+        .
+        self.hud.mode = 1
+
+Also, PyQt's QPainter has a method repaint() that can draw the whole screen with new data every time it's called. So, after passing the values, I simply call 
+        self.hud.repaint()
+   
+The differences from original pyG5AIWidget: 
+* Removed turn co-ordinator
+* Removed indicators for set airspeed and set altitude
+* Added flight mode, GNSS fix, and arm state status display (available from MAVLink Protocol)
+* Removed logging feature from pyG5.py and created class attributes to receive data from another file
+
+From my experience, this attitude indicator works great as a substitute for Mission Planner and QGroundControl if you are building your custom ground station for UAVs. All the parameters are available through mavlink packets, so it should be fairly standard. It'll need a bit of work on creating a framework to receive Mavlink data, store it in a database, pull required data into frontend, and finally pass them to our Attitude Indicator Widget. 
+
+
 ## License
 
 [License files](LICENSE.TXT)
